@@ -1,4 +1,5 @@
 import { User } from "../Models/user.model.js";
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 
 export const register =async (req,res) =>{
@@ -52,5 +53,34 @@ export const login = async (req,res)=>{
         return res.status(401).json({
                 message:"something error password rong",success:false
             })
+    }
+    const token = await jwt.sign({userid:user._id} ,process.env.SECRET_KEY,{expiresIn:'1d'});
+    return res.cookie('token',token,{httpOnly:true,sameSite:'strict',maxAge:1*24*60*60*1000}).json({
+        message:` Welcome back ${user.username}`,success:true
+    })
+}
+export const logout = async (req,res) =>{
+    try {
+        return res.cookie("token","",{maxAge:0}).json({
+            message:"logout successfully ",success:true
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(4001).json({
+            message:"something error ",success:false
+        })
+    }
+}   
+
+export const getProfile = async (req,res) =>{
+    try {
+        const userId =req.param.id;
+        let user = await User.findById(userId);
+        return res.status(200).json({
+            user,success:true
+        })
+    } catch (error) {
+         console.log(error)
+        return res.status(4001).json
     }
 }
