@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import connectDB from './DB/db.js'
+import useRoute from './Routes/user.route.js'
 
 const app = express();
 dotenv.config()
@@ -18,6 +19,8 @@ const corsOptions ={
 }
 app.use(cors(corsOptions))
 
+//router api
+app.use('/api/v1/user',useRoute)
 
 app.get('/',(req,res)=>{
     res.send('ok chal gaya kam')
